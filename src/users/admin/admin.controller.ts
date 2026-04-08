@@ -80,9 +80,15 @@ export class AdminController {
 
   }
 
+  @UseGuards(JwtRoleGuard)
   @Delete('delete/employee/:id')
-  async removeEmployee(@Param('id', ParseIntPipe) id: number) {
-    return this.adminService.removeEmployee(id);
+  async removeEmployee(@Param('id', ParseIntPipe) id: number,@Req() req) {
+    if((req.user.role == Role.ADMIN) && (req.user.verified == true)){
+       return this.adminService.removeEmployee(id,req.user);
+    }
+    else{
+      throw new ForbiddenException(`PLease try from verified admin account`);
+    }
   }
 
 

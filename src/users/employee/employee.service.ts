@@ -49,6 +49,17 @@ export class EmployeeService {
     return this.employeeRepo.find();
   }
 
+
+  async findEmployeeBy(id:number){
+      return await this.employeeRepo.findOne({
+        where:{id},
+        relations:['admin']
+      });
+    
+  }
+  async deleteEmployee(id:number){
+    return await this.employeeRepo.delete({id});
+  }
   // async updateCountry(id: number, country: string) {
   //   const result = await  this.employeeRepo.update(id, { country });
   //   if(result.affected === 0 ){

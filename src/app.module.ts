@@ -12,7 +12,6 @@ import { AdminModule } from './users/admin/admin.module';
 import { BuyerModule } from './users/buyer/buyer.module';
 import { EmployeeModule } from './users/employee/employee.module';
 import { SellerModule } from './users/seller/seller.module';
-import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -29,9 +28,9 @@ import { AuthModule } from './auth/auth.module';
       },
     }),
     
-    BooksModule,
-    GroceryModule,
-    FruitsModule,
+    //BooksModule,
+    //GroceryModule,
+    //FruitsModule,
 
     AdminModule,
     BuyerModule,

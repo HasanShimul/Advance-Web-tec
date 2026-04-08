@@ -41,4 +41,9 @@ export class Employee {
     onDelete:'SET NULL'
   })
   admin:AdminEntity;
+
+  // @ManyToOne( () => AdminEntity, (parameter) => parameter.employee)
+  // admin:AdminEntity;
 }
+
+

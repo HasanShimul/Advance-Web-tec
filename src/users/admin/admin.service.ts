@@ -134,7 +134,23 @@ export class AdminService {
 
   async findallinActiveEmployee() { }
 
-  async removeEmployee(id) { }
+  async removeEmployee(id,adminInfo) { 
+    
+    const employee = await this.employeeService.findEmployeeBy(id);
+     
+    if(!employee){
+      throw new NotFoundException(`Employee with id :${id} not found`);
+    }
+    if(employee.admin.id == adminInfo.id){
+     const result =  this.employeeService.deleteEmployee(id);
+     //console.log("result : " ,result);
+     return {
+      message: `Employee ${employee.fullname} is deleted by admin : ${adminInfo.name}`
+     }
+    }
+    
+    throw new ForbiddenException(`admin: ${adminInfo.fullName} is not permited to delete employee: ${employee.fullname}`);
+  }
 
 
   async updateEmployee(body) { }

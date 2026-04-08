@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { VerificationCode } from './verification.entity';
 import { Role } from 'src/common/enum/role.enum';
 import { Employee } from '../employee/employee.entity';
+import { Matches } from 'class-validator';
 
 @Entity('admins')
 export class AdminEntity {
@@ -31,7 +32,8 @@ export class AdminEntity {
   @Column({
     type: 'enum',
     enum: Role,
-    default: Role.ADMIN,
+   default: Role.ADMIN,
+    
   })
   role: Role;
 
@@ -40,4 +42,7 @@ export class AdminEntity {
 
   @OneToMany(() => Employee, (employee) => employee.admin)
   employees : Employee[]
+
+  // @OneToMany( () => Employee, (parameter) => parameter.admin)
+  // employee:Employee[]
 }
