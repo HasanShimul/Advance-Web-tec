@@ -25,15 +25,14 @@ export class EmployeeDto {
  })
  password:string;
 
- @IsNotEmpty()
- @IsEnum(Department_Enum,{
-  message:`allowed department: ${Department_Enum.SALES},${Department_Enum.IT},${Department_Enum.SUPPORT}`
- })
+ 
+//  @IsEnum(Department_Enum,{
+//   message:`allowed department: ${Department_Enum.SALES},${Department_Enum.IT},${Department_Enum.SUPPORT}`
+//  })
  department:Department_Enum;
 
- @IsNotEmpty()
- @IsEnum(Role,{
-  message:`allowed position : ${Role.BUYER},${Role.EMPLOYEE},${Role.USER},${Role.SALESMAN}`
- })
+//  @IsEnum(Role,{
+//   message:`allowed position : ${Role.BUYER},${Role.EMPLOYEE},${Role.USER},${Role.SALESMAN}`
+//  })
 position:Role;
 }

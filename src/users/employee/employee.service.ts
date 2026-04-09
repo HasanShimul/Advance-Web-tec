@@ -6,6 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { EmployeeDto } from "../dto/create-employee.dto";
 import { Role } from "src/common/enum/role.enum";
+import { NotFoundError } from "rxjs";
 
 @Injectable()
 export class EmployeeService {
@@ -100,12 +101,34 @@ export class EmployeeService {
 
   }
   async deleteEmployee(id: number) {
-    return await this.employeeRepo.delete({ id });
+
+    const result= await this.employeeRepo.delete({ id });
+
+    if(result.affected == 0 ){
+      throw new BadRequestException('can not delete employee');
+    }else{
+      return{
+        message:`Employee deleted `
+      }
+    }
   }
 
 
-  async chagePhone(phone){
-    return phone;
+  async chagePhone(phone,email){
+    const userExist = await this.employeeRepo.findOne({
+      where:{email}
+    });
+    if(!userExist){
+      throw new NotFoundError('user does not exist');
+    }
+    userExist.phone = phone;
+console.log("phone:",  typeof phone );
+    const result = await this.employeeRepo.save(userExist);
+    if(result){
+      return {
+        message:`phone number: ${phone} is updated for ${email}`
+      }
+    }
   }
   // async updateCountry(id: number, country: string) {
   //   const result = await  this.employeeRepo.update(id, { country });

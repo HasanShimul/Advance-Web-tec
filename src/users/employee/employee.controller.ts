@@ -1,10 +1,11 @@
-import { Body, Controller, Post, Patch, Param, Get, Query } from "@nestjs/common";
+import { Body, Controller, Post, Patch, Param, Get, Query, UseGuards, Req, BadRequestException, Delete, ForbiddenException } from "@nestjs/common";
 import { Employee } from "./employee.entity";
 import { EmployeeService } from "./employee.service";
 import { EmployeeDto } from "../dto/create-employee.dto";
 import { EmployeeLoginDto } from "../dto/employeelogin.dto";
 import { Role } from "src/common/enum/role.enum";
 import { phoneDto } from "../dto/phone.dto";
+import { JwtRoleGuard } from "src/auth/jwt-roles.guard";
 
 
 @Controller('users/employee')
@@ -33,10 +34,28 @@ export class EmployeeController {
   async findAllEmployee() {
     return await this.employeeservice.findAllEmployee();
   }
-@Post('change/phone') //need to do
-async chagePhone(@Body() phone:phoneDto){
-  return this.employeeservice.chagePhone(phone);
+
+  @UseGuards(JwtRoleGuard)
+@Patch('change/phone') 
+async chagePhone(@Body() phone:phoneDto,@Req() req){
+  if(req.user.role == Role.EMPLOYEE){
+    return this.employeeservice.chagePhone(phone.phone,req.user.email);
+  }else{
+      throw new BadRequestException('You can not chnage phone number.');
+    }
+  }
     
+
+  @UseGuards(JwtRoleGuard)
+  @Delete('delete')
+  async deleteEmployee(@Req() req){
+    if(req.user.role == Role.EMPLOYEE){
+      return this.employeeservice.deleteEmployee(req.user.id);
+    }else{
+      throw new ForbiddenException('You are not allowed to delete employee');
+    }
+
+  }
 }
 
   // @Patch('update-country/:id')
@@ -53,4 +72,3 @@ async chagePhone(@Body() phone:phoneDto){
   // async getUnknownCountry(){
   //   return this.service.getUnknownCountry();
   // }
-}
