@@ -102,6 +102,11 @@ export class EmployeeService {
   async deleteEmployee(id: number) {
     return await this.employeeRepo.delete({ id });
   }
+
+
+  async chagePhone(phone){
+    return phone;
+  }
   // async updateCountry(id: number, country: string) {
   //   const result = await  this.employeeRepo.update(id, { country });
   //   if(result.affected === 0 ){

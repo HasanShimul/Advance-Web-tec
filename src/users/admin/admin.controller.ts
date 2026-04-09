@@ -111,7 +111,7 @@ export class AdminController {
   @Patch('verify/email')
   async mailVerify(
     @Body('email') email: string,
-    @Body('code', ParseIntPipe) code: number
+    @Body('code') code: string
   ) {
     return this.adminService.mailVerify(email, code);
   }

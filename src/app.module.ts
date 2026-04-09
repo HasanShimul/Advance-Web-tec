@@ -12,6 +12,7 @@ import { AdminModule } from './users/admin/admin.module';
 import { BuyerModule } from './users/buyer/buyer.module';
 import { EmployeeModule } from './users/employee/employee.module';
 import { SellerModule } from './users/seller/seller.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,6 +26,15 @@ import { SellerModule } from './users/seller/seller.module';
       synchronize: true,
       ssl: {
         rejectUnauthorized: false,
+      },
+    }),
+    MailerModule.forRoot({
+      transport:{
+        service:'gmail',
+        auth:{
+          user:process.env.FROM_EMAIL,
+          pass:process.env.APP_PASSWORD
+        },
       },
     }),
     

@@ -4,6 +4,7 @@ import { EmployeeService } from "./employee.service";
 import { EmployeeDto } from "../dto/create-employee.dto";
 import { EmployeeLoginDto } from "../dto/employeelogin.dto";
 import { Role } from "src/common/enum/role.enum";
+import { phoneDto } from "../dto/phone.dto";
 
 
 @Controller('users/employee')
@@ -25,14 +26,18 @@ export class EmployeeController {
 
   @Post('login')
   async loginEmployee(@Body() body: EmployeeLoginDto) {
-     this.employeeservice.loginEmployee(body.username, body.password);
+     return await this.employeeservice.loginEmployee(body.username, body.password);
   }
 
   @Get('findall')
   async findAllEmployee() {
     return await this.employeeservice.findAllEmployee();
   }
-
+@Post('change/phone') //need to do
+async chagePhone(@Body() phone:phoneDto){
+  return this.employeeservice.chagePhone(phone);
+    
+}
 
   // @Patch('update-country/:id')
   // async modifyCountry(@Param('id') id : string, @Body('country')country : string){

@@ -5,7 +5,7 @@ export class EmployeeLoginDto{
         message:"must provide a  username."
     })
     @IsEmail({},{
-        message:"Email must be an email."
+        message:"username must be an email."
     })
     username:string;
 

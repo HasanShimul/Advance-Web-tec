@@ -8,6 +8,7 @@ import { UsersResponse } from '../dto/interface/admin-response.interface';
 import { VerificationCode } from './verification.entity';
 import { EmployeeService } from '../employee/employee.service';
 import { Role } from 'src/common/enum/role.enum';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AdminService {
@@ -20,7 +21,8 @@ export class AdminService {
     private verificationRepo: Repository<VerificationCode>,
 
     private jwtService: JwtService,
-    private employeeService:EmployeeService
+    private employeeService: EmployeeService,
+    private mailService: MailerService
   ) { }
 
 
@@ -41,22 +43,27 @@ export class AdminService {
       fullName, email, phone, city,
       password: hashPassword,
     });
-    const saveUser = await this.adminRepo.save(admin);
-
 
     const verificationcode = Math.floor(100000 + Math.random() * 900000);
+
+    console.log("EMAIL:", process.env.FROM_EMAIL);
+console.log("PASS:", process.env.APP_PASSWORD);
+
+    const isMailed = await this.codeSendToMail(email, verificationcode);
+    const saveUser = await this.adminRepo.save(admin);
+
     await this.verificationRepo.save({
       email,
       verificationCode: verificationcode,
       admin: { id: saveUser.id }
     });
 
-
-
-    return {
-      message: `admin is created successfully with ${email}`,
-      data: `verification code : ${verificationcode}`
-    };
+    if (!isMailed) {
+       throw new BadRequestException('Verification code send fails');
+    }
+    return{
+      message:`Admin ${saveUser.fullName} is created successfull. Verification code send to ${saveUser.email}`
+    }
 
 
   }
@@ -82,10 +89,10 @@ export class AdminService {
       email: user.email,
       role: user.role,
       phone: user.phone,
-      verified:user.isVerified
+      verified: user.isVerified
     }
     const token = await this.jwtService.signAsync(payload);
-    console.log("Token: " ,token);
+    console.log("Token: ", token);
     return {
       access_token: token
     };
@@ -93,15 +100,15 @@ export class AdminService {
   }
 
 
-  async createEmployee(body,user) {
-    if(user.role !== Role.ADMIN){
+  async createEmployee(body, user) {
+    if (user.role !== Role.ADMIN) {
       throw new ForbiddenException('only admin can create employee');
     }
 
-   return this.employeeService.create(body,user);
+    return this.employeeService.create(body, user);
   }
 
-  async findAllEmployee(id: number ,name:string) {
+  async findAllEmployee(id: number, name: string) {
     // const employees = await  this.employee.find({
     //   where:{admin:{id:adminId}}
     // })
@@ -112,12 +119,12 @@ export class AdminService {
     // }
 
     const emplyees = await this.employeeService.findAllEmployee(Number(id));
-    if(emplyees.length == 0){
+    if (emplyees.length == 0) {
       return {
-        message:`no employee is found under admin ${name}`
+        message: `no employee is found under admin ${name}`
       }
     }
-    else{
+    else {
       return emplyees;
     }
 
@@ -134,21 +141,21 @@ export class AdminService {
 
   async findallinActiveEmployee() { }
 
-  async removeEmployee(id,adminInfo) { 
-    
+  async removeEmployee(id, adminInfo) {
+
     const employee = await this.employeeService.findEmployeeBy(id);
-     
-    if(!employee){
+
+    if (!employee) {
       throw new NotFoundException(`Employee with id :${id} not found`);
     }
-    if(employee.admin.id == adminInfo.id){
-     const result =  this.employeeService.deleteEmployee(id);
-     //console.log("result : " ,result);
-     return {
-      message: `Employee ${employee.fullname} is deleted by admin : ${adminInfo.name}`
-     }
+    if (employee.admin.id == adminInfo.id) {
+      const result = this.employeeService.deleteEmployee(id);
+      //console.log("result : " ,result);
+      return {
+        message: `Employee ${employee.fullname} is deleted by admin : ${adminInfo.name}`
+      }
     }
-    
+
     throw new ForbiddenException(`admin: ${adminInfo.fullName} is not permited to delete employee: ${employee.fullname}`);
   }
 
@@ -156,11 +163,11 @@ export class AdminService {
   async updateEmployee(body) { }
 
 
-async updateAdminName(name:string,adminInfo){
-  return{
-    
+  async updateAdminName(name: string, adminInfo) {
+    return {
+
+    }
   }
-}
 
 
   async mailVerify(email, code) {
@@ -169,7 +176,7 @@ async updateAdminName(name:string,adminInfo){
       relations: ['admin']
     });
     if (userFound) {
-      if (userFound.verificationCode === Number(code)) {
+      if (String(userFound.verificationCode) === String(code).trim()) {
         await this.adminRepo.update(userFound.admin.id, { isVerified: true })
         await this.verificationRepo.delete(userFound.id);
         return {
@@ -185,6 +192,22 @@ async updateAdminName(name:string,adminInfo){
     }
   }
 
+
+  async codeSendToMail(to: string, code: number): Promise<boolean> {
+    try {
+      await this.mailService.sendMail({
+        to,
+        subject: "Email Verification Code from ABC ecommerce.",
+        text: `You email verification code is ${code}.Please dont share it with anyone`,
+      })
+      return true;
+    }
+    catch (error) {
+      console.log("Mail sending fail",error);
+      return false;
+
+    }
+  }
 
   //   async create(data) {
   //     //const user = await this.repo.save(data);
