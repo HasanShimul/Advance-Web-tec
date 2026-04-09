@@ -156,6 +156,12 @@ export class AdminService {
   async updateEmployee(body) { }
 
 
+async updateAdminName(name:string,adminInfo){
+  return{
+    
+  }
+}
+
 
   async mailVerify(email, code) {
     const userFound = await this.verificationRepo.findOne({

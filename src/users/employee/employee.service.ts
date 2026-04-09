@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, Between } from "typeorm";
 import { Employee } from "./employee.entity";
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 import { EmployeeDto } from "../dto/create-employee.dto";
 import { Role } from "src/common/enum/role.enum";
 
@@ -12,6 +13,8 @@ export class EmployeeService {
   constructor(
     @InjectRepository(Employee)
     private readonly employeeRepo: Repository<Employee>,
+
+    private jwtService: JwtService,
   ) { }
 
   async create(data: EmployeeDto, user?: any) {
@@ -34,31 +37,70 @@ export class EmployeeService {
     });
 
     const saveEmployee = await this.employeeRepo.save(employee);
-    return {
-      data: `employee ${saveEmployee.fullname} is created with email ${email} by admin ${user.name}`
+    if (user && user.role == Role.ADMIN) {
+      return {
+        data: `employee ${saveEmployee.fullname} is created with email ${email} by admin ${user.name}`
+      }
+    }
+    return{
+      data:`Employee ${saveEmployee.fullname} is created successfull with username: ${email}`
     }
   }
 
 
-  async findAllEmployee(id ?:number){
-    if(id){
+  async loginEmployee(username: string, password: string) {
+
+    const employeeEsist = await this.employeeRepo.findOne({
+      where: {
+        email: username
+      }
+    });
+
+    if (!employeeEsist) {
+      throw new BadRequestException(`username not found`);
+    }
+    const isMatched = await bcrypt.compare(password, employeeEsist.password);
+
+    if (!isMatched) {
+      throw new BadRequestException(`Invalid cedentials.`);
+    }
+
+    const payload = {
+      id: employeeEsist.id,
+      name: employeeEsist.fullname,
+      email: employeeEsist.email,
+      department: employeeEsist.department,
+      role: employeeEsist.position
+    }
+
+    const token = await this.jwtService.signAsync(payload);
+    console.log("Employee token:", token);
+    return {
+      access_token: token
+    };
+
+
+  }
+
+  async findAllEmployee(adminid?: number) {
+    if (adminid) {
       return this.employeeRepo.find({
-        where:{admin:{id:id}}
+        where: { admin: { id: adminid } }
       });
     }
     return this.employeeRepo.find();
   }
 
 
-  async findEmployeeBy(id:number){
-      return await this.employeeRepo.findOne({
-        where:{id},
-        relations:['admin']
-      });
-    
+  async findEmployeeBy(id: number) {
+    return await this.employeeRepo.findOne({
+      where: { id },
+      relations: ['admin']
+    });
+
   }
-  async deleteEmployee(id:number){
-    return await this.employeeRepo.delete({id});
+  async deleteEmployee(id: number) {
+    return await this.employeeRepo.delete({ id });
   }
   // async updateCountry(id: number, country: string) {
   //   const result = await  this.employeeRepo.update(id, { country });

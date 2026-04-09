@@ -4,6 +4,6 @@ export enum Role {
     EMPLOYEE = 'employee',
     MANAGER = 'manager',
     SALESMAN = 'salesman',
-    BUYER = 'buyer'
+    BUYER = 'buyer',
   }
   

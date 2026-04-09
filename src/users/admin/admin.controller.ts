@@ -75,9 +75,25 @@ export class AdminController {
     return this.adminService.updateEmployee(body);
   }
 
-  @Patch(':id')
-  async updateProfile(@Body() body) {
+  @UseGuards(JwtRoleGuard)
+  @Patch('update/name/:id')
+  async updateName(@Body() body ,@Param('id', ParseIntPipe) id : number , @Req() req) {
 
+    if((req.user.role == Role.ADMIN ) && (req.user.verified == true)){
+        
+      return await this.adminService.updateAdminName(body.name , req.user);
+      // return{
+      //     body,id,
+      //     user:req.user,
+      //     ip:req.ip,
+      //     method:req.method,
+      //     url:req.url,
+      //   }
+    }
+    else{
+      throw new ForbiddenException(`You are not permited to change name.`);
+    }
+ 
   }
 
   @UseGuards(JwtRoleGuard)
