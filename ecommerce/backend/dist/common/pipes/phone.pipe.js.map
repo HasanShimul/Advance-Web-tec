@@ -1,0 +1,1 @@
+{"version":3,"file":"phone.pipe.js","sourceRoot":"","sources":["../../../src/common/pipes/phone.pipe.ts"],"names":[],"mappings":";;;AAAA,2CAAoE;AAEpE,MAAa,SAAS;IACpB,SAAS,CAAC,KAAa;QAErB,IAAI,CAAC,OAAO,CAAC,IAAI,CAAC,KAAK,CAAC,EAAE,CAAC;YACzB,MAAM,IAAI,4BAAmB,CAAC,iCAAiC,CAAC,CAAC;QACnE,CAAC;QAED,OAAO,MAAM,CAAC,KAAK,CAAC,CAAC;IACvB,CAAC;CACF;AATD,8BASC"}
