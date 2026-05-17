@@ -20,6 +20,7 @@ export declare class AdminService {
     createEmployee(body: any, user: any): Promise<{
         data: string;
     }>;
+    getAdminProfile(id: number): Promise<AdminEntity | null>;
     findAllEmployee(id: number, name: string): Promise<import("../employee/employee.entity").Employee[] | {
         message: string;
     }>;

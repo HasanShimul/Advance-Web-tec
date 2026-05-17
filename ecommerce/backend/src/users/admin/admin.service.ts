@@ -109,6 +109,22 @@ export class AdminService {
     return this.employeeService.create(body, user);
   }
 
+
+
+
+  async getAdminProfile(id:number){
+    const admin = this.adminRepo.findOne({
+      where:{id}
+    });
+    if(!admin){
+      throw new BadRequestException("Admin not found");
+    }
+    return admin;
+  }
+
+
+
+
   async findAllEmployee(id: number, name: string) {
     // const employees = await  this.employee.find({
     //   where:{admin:{id:adminId}}

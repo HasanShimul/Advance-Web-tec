@@ -42,7 +42,7 @@ export default function EmployeeRegister() {
 
     return (
         <>
-            <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-3">
+            <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-5 w-[80%]">
 
                 <input
                     type="text"
@@ -50,14 +50,16 @@ export default function EmployeeRegister() {
                     placeholder="fullname"
                     value={formData.fullname}
                     onChange={handleChange}
-                    className="border p-2" />
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition dark:bg-gray-700 dark:text-white"
+                    />
                 <input
                     type="text"
                     name="email"
                     placeholder="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="border p-2" />
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition dark:bg-gray-700 dark:text-white"
+                    />
 
                 <input
                     type="text"
@@ -65,7 +67,8 @@ export default function EmployeeRegister() {
                     placeholder="phone"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="border p-2" />
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition dark:bg-gray-700 dark:text-white"
+/>
 
                 <input
                     type="text"
@@ -73,13 +76,14 @@ export default function EmployeeRegister() {
                     placeholder="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="border p-2 " />
+                    className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition dark:bg-gray-700 dark:text-white"
+                    />
 
                 <select
-                    name="deprtment"
+                    name="department"
                     value={formData.deprtment}
                     onChange={handleChange}
-                    className="border p-2 bg-white text-black"
+                    className="w-full px-4 py-3 rounded-xl bg-white text-black"
                 >
                     <option value="">Select a department</option>
                     <option value="sales">SALES</option>
@@ -87,10 +91,12 @@ export default function EmployeeRegister() {
                 </select>
 
                 <select
-                    name=" position"
+                    name="position"
                     value={formData.position}
                     onChange={handleChange}
-                    className="border p-2 bg-white text-black" >
+                    className="w-full px-4 py-3 rounded-xl bg-white text-black"
+                >
+                   
                     <option value="">Select a position</option>
                     <option value="user">USER</option>
                     <option value="employee">EMPLOYEE</option>
@@ -99,7 +105,7 @@ export default function EmployeeRegister() {
                     <option value="buyer">BUYER</option>
                 </select>
 
-                <button type="submit" className="bg-blue-600 text-white p-2 rounded">
+                <button type="submit" className="bg-blue-600 text-white p-2 rounded-xl">
                     Register
                 </button>
             </form>

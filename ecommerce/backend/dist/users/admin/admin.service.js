@@ -130,6 +130,15 @@ let AdminService = class AdminService {
         }
         return this.employeeService.create(body, user);
     }
+    async getAdminProfile(id) {
+        const admin = this.adminRepo.findOne({
+            where: { id }
+        });
+        if (!admin) {
+            throw new common_1.BadRequestException("Admin not found");
+        }
+        return admin;
+    }
     async findAllEmployee(id, name) {
         const emplyees = await this.employeeService.findAllEmployee(Number(id));
         if (emplyees.length == 0) {

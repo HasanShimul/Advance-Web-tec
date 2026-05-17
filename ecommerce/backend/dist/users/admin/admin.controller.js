@@ -31,6 +31,13 @@ let AdminController = class AdminController {
     async loginin(logindto) {
         return this.adminService.login(logindto.email, logindto.password);
     }
+    async getProfile(req) {
+        const user = req.user;
+        if (!user) {
+            throw new Error("Unauthorized");
+        }
+        return this.adminService.getAdminProfile(user.id);
+    }
     async createEmployee(body, req) {
         if ((req.user.role === role_enum_1.Role.ADMIN) && (req.user.verified == true)) {
             return this.adminService.createEmployee(body, req.user);
@@ -93,6 +100,14 @@ __decorate([
     __metadata("design:paramtypes", [login_dto_1.LoginDto]),
     __metadata("design:returntype", Promise)
 ], AdminController.prototype, "loginin", null);
+__decorate([
+    (0, common_1.UseGuards)(jwt_roles_guard_1.JwtRoleGuard),
+    (0, common_1.Get)("profile"),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getProfile", null);
 __decorate([
     (0, common_1.UseGuards)(jwt_roles_guard_1.JwtRoleGuard),
     (0, common_1.Post)('signup/employee'),

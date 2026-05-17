@@ -11,6 +11,7 @@ export declare class AdminController {
     loginin(logindto: LoginDto): Promise<{
         access_token: string;
     }>;
+    getProfile(req: any): Promise<import("./admin.entity").AdminEntity | null>;
     createEmployee(body: EmployeeDto, req: any): Promise<{
         data: string;
     }>;

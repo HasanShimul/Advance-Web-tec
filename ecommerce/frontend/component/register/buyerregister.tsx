@@ -62,7 +62,7 @@ export default function BuyerRegister() {
                     className="border p-2" />
 
                 <input
-                    type="text"
+                    type="password"
                     name="password"
                     placeholder="password"
                     value={formData.password}

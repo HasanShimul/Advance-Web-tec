@@ -25,6 +25,21 @@ export class AdminController {
   }
 
   @UseGuards(JwtRoleGuard)
+  @Get("profile")
+  async getProfile(@Req() req){
+    const user = req.user as any;
+
+    if (!user) {
+      throw new Error("Unauthorized");
+    }
+  
+    return this.adminService.getAdminProfile(user.id);
+
+  }
+
+
+
+  @UseGuards(JwtRoleGuard)
   @Post('signup/employee')
   async createEmployee(@Body() body: EmployeeDto, @Req() req) {
 
@@ -36,6 +51,9 @@ export class AdminController {
     throw new ForbiddenException(`${req.user.name} id not allowed to create employee`);
   
   }
+
+
+  
 
 
   @UseGuards(JwtRoleGuard)
