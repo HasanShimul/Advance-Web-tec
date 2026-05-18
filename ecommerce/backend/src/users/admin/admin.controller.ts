@@ -52,7 +52,10 @@ export class AdminController {
   
   }
 
+// @Put("profile/update")
+//    async updateProfile(@Req() req, @Body() dto:  ) {
 
+// }
   
 
 
