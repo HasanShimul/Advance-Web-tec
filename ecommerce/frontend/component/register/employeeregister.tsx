@@ -1,8 +1,16 @@
 import { useState } from "react";
-import { deprecate } from "util";
+import axios from "axios";
 import { email, z } from "zod";
+import API_BASE_URL from "@/app/config/api";
 
 export default function EmployeeRegister() {
+
+
+    const [errors, setErrors] = useState<any>({});
+    const [loading, setLoading] = useState(false);
+    const [serverError, setServerError] = useState("");
+    const [successMessage, setSuccessMessage] = useState("");
+
 
     const employeSchema = z.object({
         fullname: z.string().min(1, "Name is required"),
@@ -18,7 +26,7 @@ export default function EmployeeRegister() {
         email: "",
         phone: "",
         password: "",
-        deprtment: "",
+        department: "",
         position: ""
     });
 
@@ -30,19 +38,88 @@ export default function EmployeeRegister() {
         }));
     }
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
+
+        setServerError("");
+        setSuccessMessage("");
+
         const result = employeSchema.safeParse(formData);
+
+        // Frontend Validation
         if (!result.success) {
-            console.log(result.error.format());
+
+            const fieldErrors: any = {};
+
+            result.error.issues.forEach((err) => {
+                fieldErrors[err.path[0]] = err.message;
+            });
+
+            setErrors(fieldErrors);
+
             return;
         }
-        console.log("Valid Form data", result);
-    }
+
+        setErrors({});
+
+        try {
+
+            setLoading(true);
+
+            const response = await axios.post(
+                `${API_BASE_URL}/users/employee/create`,
+                formData
+            );
+
+            console.log(response.data);
+
+            setSuccessMessage("Employee registered successfully");
+
+            // Reset form
+            setFormData({
+                fullname: "",
+                email: "",
+                phone: "",
+                password: "",
+                department: "",
+                position: ""
+            });
+
+        } catch (err: any) {
+
+            if (err.response) {
+
+
+
+                setServerError(
+                    err.response.data.message || "Something went wrong"
+                );
+
+            } else {
+
+                setServerError("Server is not responding");
+            }
+
+        } finally {
+
+            setLoading(false);
+        }
+    };
 
     return (
         <>
             <form noValidate onSubmit={handleSubmit} className="flex flex-col gap-5 w-[80%]">
+                {serverError && (
+                    <p className="text-red-500 text-center">
+                        {serverError}
+                    </p>
+                )}
+
+                {successMessage && (
+                    <p className="text-green-500 text-center">
+                        {successMessage}
+                    </p>
+                )}
 
                 <input
                     type="text"
@@ -51,15 +128,24 @@ export default function EmployeeRegister() {
                     value={formData.fullname}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition dark:bg-gray-700 dark:text-white"
-                    />
-                <input
+                />
+                {errors.fullname && (
+                    <p className="text-red-500 text-sm">
+                        {errors.fullname}
+                    </p>
+                )}                <input
                     type="text"
                     name="email"
                     placeholder="email"
                     value={formData.email}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition dark:bg-gray-700 dark:text-white"
-                    />
+                />
+                {errors.email && (
+                    <p className="text-red-500 text-sm">
+                        {errors.email}
+                    </p>
+                )}
 
                 <input
                     type="text"
@@ -68,20 +154,30 @@ export default function EmployeeRegister() {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition dark:bg-gray-700 dark:text-white"
-/>
+                />
 
+                {errors.phone && (
+                    <p className="text-red-500 text-sm">
+                        {errors.phone}
+                    </p>
+                )}
                 <input
-                    type="text"
+                    type="password"
                     name="password"
                     placeholder="password"
                     value={formData.password}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition dark:bg-gray-700 dark:text-white"
-                    />
+                />
+                {errors.password && (
+                    <p className="text-red-500 text-sm">
+                        {errors.password}
+                    </p>
+                )}
 
                 <select
                     name="department"
-                    value={formData.deprtment}
+                    value={formData.department}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl bg-white text-black"
                 >
@@ -89,6 +185,11 @@ export default function EmployeeRegister() {
                     <option value="sales">SALES</option>
                     <option value="support">SUPPORT</option>
                 </select>
+                {errors.department && (
+                    <p className="text-red-500 text-sm">
+                        {errors.department}
+                    </p>
+                )}
 
                 <select
                     name="position"
@@ -96,7 +197,7 @@ export default function EmployeeRegister() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-xl bg-white text-black"
                 >
-                   
+
                     <option value="">Select a position</option>
                     <option value="user">USER</option>
                     <option value="employee">EMPLOYEE</option>
@@ -104,9 +205,18 @@ export default function EmployeeRegister() {
                     <option value="salesman">SALESMAN</option>
                     <option value="buyer">BUYER</option>
                 </select>
+                {errors.position && (
+                    <p className="text-red-500 text-sm">
+                        {errors.position}
+                    </p>
+                )}
 
-                <button type="submit" className="bg-blue-600 text-white p-2 rounded-xl">
-                    Register
+                <button
+                    type="submit"
+                    disabled={loading}
+                    className="bg-blue-600 text-white p-2 rounded-xl"
+                >
+                    {loading ? "Registering..." : "Register"}
                 </button>
             </form>
         </>

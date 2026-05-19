@@ -54,11 +54,14 @@ const bcrypt = __importStar(require("bcrypt"));
 const jwt_1 = require("@nestjs/jwt");
 const role_enum_1 = require("../../common/enum/role.enum");
 const rxjs_1 = require("rxjs");
+const pusher_service_1 = require("../../pusher/pusher.service");
 let EmployeeService = class EmployeeService {
     employeeRepo;
+    pusherService;
     jwtService;
-    constructor(employeeRepo, jwtService) {
+    constructor(employeeRepo, pusherService, jwtService) {
         this.employeeRepo = employeeRepo;
+        this.pusherService = pusherService;
         this.jwtService = jwtService;
     }
     async create(data, user) {
@@ -79,6 +82,9 @@ let EmployeeService = class EmployeeService {
             password: hashPassword, admin
         });
         const saveEmployee = await this.employeeRepo.save(employee);
+        if (user && user.role == role_enum_1.Role.ADMIN) {
+            await this.pusherService.triggerEmployeeCreated(saveEmployee.fullname);
+        }
         if (user && user.role == role_enum_1.Role.ADMIN) {
             return {
                 data: `employee ${saveEmployee.fullname} is created with email ${email} by admin ${user.name}`
@@ -180,6 +186,7 @@ exports.EmployeeService = EmployeeService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(employee_entity_1.Employee)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        pusher_service_1.PusherService,
         jwt_1.JwtService])
 ], EmployeeService);
 //# sourceMappingURL=employee.service.js.map

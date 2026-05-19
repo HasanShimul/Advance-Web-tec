@@ -43,7 +43,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     //FruitsModule,
 
     AdminModule,
-    BuyerModule,
+    //BuyerModule,
     EmployeeModule,
     SellerModule
 

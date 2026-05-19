@@ -8,6 +8,7 @@ import { EmployeeDto } from "../dto/create-employee.dto";
 import { Role } from "src/common/enum/role.enum";
 import { NotFoundError } from "rxjs";
 import { AuthWeakPasswordError } from "@supabase/supabase-js";
+import { PusherService } from "src/pusher/pusher.service";
 
 @Injectable()
 export class EmployeeService {
@@ -15,6 +16,8 @@ export class EmployeeService {
   constructor(
     @InjectRepository(Employee)
     private readonly employeeRepo: Repository<Employee>,
+
+    private readonly pusherService:PusherService,
 
     private jwtService: JwtService,
   ) { }
@@ -41,7 +44,13 @@ export class EmployeeService {
     });
 
     const saveEmployee = await this.employeeRepo.save(employee);
+    if(user && user.role == Role.ADMIN){
+      await this.pusherService.triggerEmployeeCreated(
+        saveEmployee.fullname
+      );
+    }
     if (user && user.role == Role.ADMIN) {
+
       return {
         data: `employee ${saveEmployee.fullname} is created with email ${email} by admin ${user.name}`
       }

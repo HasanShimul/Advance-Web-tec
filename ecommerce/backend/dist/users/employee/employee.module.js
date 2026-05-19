@@ -13,6 +13,7 @@ const employee_entity_1 = require("./employee.entity");
 const employee_controller_1 = require("./employee.controller");
 const employee_service_1 = require("./employee.service");
 const auth_module_1 = require("../../auth/auth.module");
+const pusher_service_1 = require("../../pusher/pusher.service");
 let EmployeeModule = class EmployeeModule {
 };
 exports.EmployeeModule = EmployeeModule;
@@ -21,7 +22,7 @@ exports.EmployeeModule = EmployeeModule = __decorate([
         imports: [auth_module_1.AuthModule,
             typeorm_1.TypeOrmModule.forFeature([employee_entity_1.Employee])],
         controllers: [employee_controller_1.EmployeeController],
-        providers: [employee_service_1.EmployeeService],
+        providers: [employee_service_1.EmployeeService, pusher_service_1.PusherService],
         exports: [employee_service_1.EmployeeService]
     })
 ], EmployeeModule);

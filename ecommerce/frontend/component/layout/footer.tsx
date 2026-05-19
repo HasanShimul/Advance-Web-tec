@@ -11,7 +11,7 @@ export default function Footer() {
         
         {/* Brand */}
         <div style={styles.section}>
-          <h2>ShopEase</h2>
+          <h2>ABCShop</h2>
           <p>Your trusted online store for everything.</p>
         </div>
 
@@ -34,7 +34,7 @@ export default function Footer() {
         {/* Contact */}
         <div style={styles.section}>
           <h3>Contact</h3>
-          <p>Email: support@shopease.com</p>
+          <p>Email: support@abcshop.com</p>
           <p>Phone: +880 1234-567890</p>
         </div>
 
@@ -42,7 +42,7 @@ export default function Footer() {
 
       {/* Bottom */}
       <div style={styles.bottom}>
-        © 2026 ShopEase. All rights reserved.
+        © 2026 ABCShop. All rights reserved.
       </div>
 
     </footer>

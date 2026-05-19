@@ -10,7 +10,7 @@ export default function Header() {
       
       {/* Logo */}
       <div style={styles.logo}>
-        ShopEase
+        ABC Shop
       </div>
 
       {/* Search Bar */}

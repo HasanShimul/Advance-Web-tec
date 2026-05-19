@@ -2,10 +2,12 @@ import { Repository } from "typeorm";
 import { Employee } from "./employee.entity";
 import { JwtService } from '@nestjs/jwt';
 import { EmployeeDto } from "../dto/create-employee.dto";
+import { PusherService } from "src/pusher/pusher.service";
 export declare class EmployeeService {
     private readonly employeeRepo;
+    private readonly pusherService;
     private jwtService;
-    constructor(employeeRepo: Repository<Employee>, jwtService: JwtService);
+    constructor(employeeRepo: Repository<Employee>, pusherService: PusherService, jwtService: JwtService);
     create(data: EmployeeDto, user?: any): Promise<{
         data: string;
     }>;

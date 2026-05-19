@@ -11,7 +11,6 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const config_1 = require("@nestjs/config");
 const admin_module_1 = require("./users/admin/admin.module");
-const buyer_module_1 = require("./users/buyer/buyer.module");
 const employee_module_1 = require("./users/employee/employee.module");
 const seller_module_1 = require("./users/seller/seller.module");
 const mailer_1 = require("@nestjs-modules/mailer");
@@ -43,7 +42,6 @@ exports.AppModule = AppModule = __decorate([
                 },
             }),
             admin_module_1.AdminModule,
-            buyer_module_1.BuyerModule,
             employee_module_1.EmployeeModule,
             seller_module_1.SellerModule
         ],
