@@ -3,6 +3,7 @@ import API_BASE_URL from "@/app/config/api";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react"
+import pusher from "@/app/config/pusher";
 import { z } from "zod";
 
 
@@ -21,17 +22,25 @@ export default function () {
   const [token, setToken] = useState<string | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(false);
+
   const [name, setname] = useState("");
   const [phone, setPhone] = useState("");
+
   const [showForm, setShowForm] = useState(false);
+
   const [employeeerrors, setEmployeeErrors] = useState<any>({});
   const [employees, setEmployees] = useState<any[]>([]);
   const [employeecreating, setEmployeeCreating] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [empLoading, setEmpLoading] = useState(false);
+
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [empdelete, setEmpDelete] = useState<string | null>(null);
+
+  const [notifications, setNotifications] = useState<any[]>([]);
+
   const router = useRouter();
 
   useEffect(() => {
@@ -47,6 +56,20 @@ export default function () {
     }
   }, [profile]);
 
+  useEffect(() => {
+    const channel = pusher.subscribe("admin-channel");
+
+    channel.bind("employee-created", (data: any) => {
+      console.log("Notification received:", data);
+      setNotifications((prev) => [data, ...prev]);
+    });
+
+    return () => {
+      channel.unbind_all();
+      channel.unsubscribe();
+    };
+
+  }, []);
   const [form, setForm] = useState({
     fullname: "",
     email: "",
@@ -290,6 +313,16 @@ export default function () {
         <header className="flex justify-around py-2 w-full bg-slate-600 mt-4 h-[7vh]">
           <div className="">
             <button className="text-green-500" onClick={getProfile}>Profile</button>
+            {notifications.length > 0 &&
+              (
+                <div className="bg-black text-white p-2">
+                  {notifications.map((n, i) => (
+                    <p key={i}>
+                      {n.message || JSON.stringify(n)}
+                    </p>
+                  ))}
+                </div>
+              )}
           </div>
           <div onClick={getAllEmployee}>Employee List</div>
           <div className="">
@@ -462,6 +495,10 @@ export default function () {
 
 
           {empLoading && <p className="text-white">Loading employees...</p>}
+
+          {/* {employees.length == 0 && (!empLoading) &&
+            <p className="text-white text-2xl text-center">No Employee is found</p>
+          } */}
 
           {employees.length > 0 && (
             <div className="mt-6 w-[60%] flex flex-col gap-3">

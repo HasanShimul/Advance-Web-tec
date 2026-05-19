@@ -55,18 +55,28 @@ export default function Login() {
         setErrors({});
         
         try{
-           const response = await axios.post(
-                `${API_BASE_URL}/admin/login`,
+        //    const response = await axios.post(
+        //         `${API_BASE_URL}/admin/login`,
+                
+        //         {
+        //             email:result.data.username,
+        //             password:result.data.password
+        //         }
+        //     );
+            const response = await axios.post(
+                `${API_BASE_URL}/users/employee/login`,
                 {
-                    email:result.data.username,
+                    username:result.data.username,
                     password:result.data.password
                 }
             );
 
-            const token  =response.data.access_token;
+            const token  = response.data.access_token;
             console.log("Response : " + token);
             localStorage.setItem("token",token);
-           router.push("/admin/dashboard");
+            localStorage.setItem("username",result.data.username);
+           //router.push("/admin/dashboard");
+           route.push("/employee/dashboard");
         }
         catch(err:any){
             if(axios.isAxiosError(err)){
@@ -88,6 +98,8 @@ export default function Login() {
 
                 <form onSubmit={handleSubmit} className="space-y-5" noValidate>
                     <div>
+                        {apiError && 
+                        <p className="text-red-500 text-center">{apiError}</p>}
                         <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                             Username
                         </label>
